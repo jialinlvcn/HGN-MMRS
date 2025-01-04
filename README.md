@@ -1,2 +1,7 @@
 # HGN
-The code of "Hierarchical Gated Network for Multimodal Remote Sensing Imagery Classification with Limited Data"
+
+The code will be released after the paper is accepted.
+
+![Caption for the picture.](figtures/Houston2013-result.png)
+
+![Caption for the picture.](figtures/Augsburg-result.png)
