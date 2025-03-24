@@ -3,9 +3,10 @@
   <p align="center">
     <a href="https://github.com/jialinlvcn"><strong>Jialin Lyu</strong></a>
     &nbsp;&nbsp;
-    <strong>Zhunga Liu</strong></a>
+    <a href="https://github.com/fuyimin96"><strong>Yimin Fu*</strong></a>
     &nbsp;&nbsp;
-    <a href="https://github.com/fuyimin96"><strong>Yimin Fu</strong></a>
+    <strong>Zhunga Liu</strong></a>
+    
   </p>
   <br>
 
@@ -85,7 +86,7 @@ If you find our work and this repository useful. Please consider giving a star :
 <!-- ```bibtex
 @inproceedings{lyu2025hierarchical,
   title={Hierarchical Gated Network for Multimodal Remote Sensing Imagery Classification with Limited Data},
-  author={Lyu, Jialin, and Liu, Zhunga and Fu, Yimin},
+  author={Lyu, Jialin, and Fu, Yimin, Liu, Zhunga},
   booktitle={IGARSS 2024 - 2024 IEEE International Geoscience and Remote Sensing Symposium},
   year={2025},
   publisher={IEEE}
