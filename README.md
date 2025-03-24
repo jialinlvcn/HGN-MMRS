@@ -1,11 +1,11 @@
 <p align="center">
   <h1 align="center">Hierarchical Gated Network for Multimodal Remote Sensing Imagery Classification with Limited Data (IGARSS'2025)</h1>
   <p align="center">
-    <a href="https://github.com/fuyimin96"><strong>Yimin Fu</strong></a>
+    <a href="https://github.com/jialinlvcn"><strong>Jialin Lyu</strong></a>
     &nbsp;&nbsp;
     <strong>Zhunga Liu</strong></a>
     &nbsp;&nbsp;
-    <a href="https://github.com/jialinlvcn"><strong>Jialin Lyu</strong></a>
+    <a href="https://github.com/fuyimin96"><strong>Yimin Fu</strong></a>
   </p>
   <br>
 
