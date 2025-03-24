@@ -46,17 +46,39 @@ You can also run the code with the following command:
 First run the train.py to train the model with multimodal remote sensing dataset.
 
 ```sh
-python train.py --lr 2e-4 --data_set Houston2013 --model HGN --device cuda:0 --data_dir ./data --model_save_dir ./checkpoints
+python train.py \
+  --lr 2e-4 \
+  --data_set Houston2013 \
+  --model HGN \
+  --device cuda:0 \
+  --data_dir ./data \
+  --model_save_dir ./checkpoints
 
-python train.py --lr 2e-4 --data_set Augsburg --model HGN --device cuda:0 --data_dir ./data --model_save_dir ./checkpoints
+python train.py \
+  --lr 2e-4 \
+  --data_set Augsburg \
+  --model HGN \
+  --device cuda:0 \
+  --data_dir ./data \
+  --model_save_dir ./checkpoints
 ```
 
 Then you can evaluate and visualize your trained network.
 
 ```sh
-python test.py --data_set Augsburg --model HGN --device cuda:0 --data_dir ./data --model_save_dir ./checkpoints
+python test.py \
+  --data_set Augsburg \
+  --model HGN \
+  --device cuda:0 \
+  --data_dir ./data \
+  --model_save_dir ./checkpoints
 
-python test.py --data_set Houston2013 --model HGN --device cuda:0 --data_dir ./data --model_save_dir ./checkpoints
+python test.py \
+  --data_set Houston2013 \
+  --model HGN \
+  --device cuda:0 \
+  --data_dir ./data \
+  --model_save_dir ./checkpoints
 ```
 
 All commands are placed in the `./scripts`. You can easily reproduce all the results of your experiments by:
