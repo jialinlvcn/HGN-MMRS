@@ -26,7 +26,6 @@ To install the requirements, you can run the following in your environment first
 
 ```
 pip install uv
-uv init
 uv venv
 source .venv/bin/activate
 UV_TORCH_BACKEND=auto uv pip install -r requirements.txt
