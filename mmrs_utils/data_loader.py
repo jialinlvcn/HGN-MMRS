@@ -4,7 +4,10 @@ import imageio
 import numpy as np
 from scipy import io, misc
 
-def split_data(gt_array: np.ndarray, train_rate: float) -> tuple[np.ndarray, np.ndarray]:
+
+def split_data(
+    gt_array: np.ndarray, train_rate: float
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Splits the ground truth data into training and testing sets based on the specified training rate.
 
@@ -68,23 +71,35 @@ class RSMultiData:
         # self.dataset_name = os.path.split(os.path.normpath(data_dir))[1]
         if "tr" in keywords.keys() & "ts" in keywords.keys():
             raise ValueError(
-                "Lost parameter [tr] or [ts], [tr] and [ts] can only be passed as parameters at the same time.\n" \
+                "Lost parameter [tr] or [ts], [tr] and [ts] can only be passed as parameters at the same time.\n"
                 "If you want to pass in only one label file, use the keyword [gt]."
             )
 
         # Load training and testing labels if provided
         if "tr" in keywords.keys() and "ts" in keywords.keys():
-            self.tr = np.squeeze(load_data(keywords["tr"])[0])  # load train labels data file
-            self.ts = np.squeeze(load_data(keywords["ts"])[0])  # load test labels data file
+            self.tr = np.squeeze(
+                load_data(keywords["tr"])[0]
+            )  # load train labels data file
+            self.ts = np.squeeze(
+                load_data(keywords["ts"])[0]
+            )  # load test labels data file
             self.gt = self.tr + self.ts
         elif "gt" in keywords.keys() and "train_rate" in keywords.keys():
             # Load ground truth and split into train and test sets if "gt" is provided
             self.gt = np.squeeze(load_data(keywords["gt"])[0])
             self.tr, self.ts = split_data(self.gt, keywords["train_rate"])
-        elif "tr" in keywords.keys() and "ts" in keywords.keys() and "train_rate" in keywords.keys():
+        elif (
+            "tr" in keywords.keys()
+            and "ts" in keywords.keys()
+            and "train_rate" in keywords.keys()
+        ):
             # Handle case where both "tr", "ts", and "train_rate" are provided
-            self.tr = np.squeeze(load_data(keywords["tr"])[0])  # load train labels data file
-            self.ts = np.squeeze(load_data(keywords["ts"])[0])  # load test labels data file
+            self.tr = np.squeeze(
+                load_data(keywords["tr"])[0]
+            )  # load train labels data file
+            self.ts = np.squeeze(
+                load_data(keywords["ts"])[0]
+            )  # load test labels data file
             self.gt = self.tr + self.ts
             self.tr, self.ts = split_data(self.gt, self.train_rate)
         elif "gt" in keywords.keys() and "train_rate" not in keywords.keys():
@@ -110,7 +125,9 @@ class RSMultiData:
             except TypeError:
                 data = None  # Handle cases where data cannot be loaded
             except RuntimeError:
-                raise RuntimeError(f"No data with np.ndarrary format found in {os.path.join(filename)}")
+                raise RuntimeError(
+                    f"No data with np.ndarrary format found in {os.path.join(filename)}"
+                )
 
             # Ensure data has the correct shape and normalize if necessary
             if len(data.shape) == 2:
@@ -124,8 +141,10 @@ class RSMultiData:
                 data_shape = data.shape
             else:
                 if data_shape != data.shape:
-                    ValueError(f"Mismatch of incoming data file. The shape of data is {data_shape}, \
-                                    and the shape of filename is data.shape")
+                    ValueError(
+                        f"Mismatch of incoming data file. The shape of data is {data_shape}, \
+                                    and the shape of filename is data.shape"
+                    )
             self.keys.append(data_type)
 
         # Check for dimensional consistency across modalities
@@ -135,8 +154,12 @@ class RSMultiData:
         if self.gt is None:
             self.gt = np.zeros(data_shape[:2], dtype=np.int64)
 
-        self.tr = self.tr if self.tr is not None else np.zeros(data_shape[:2], dtype=np.int64)
-        self.ts = self.ts if self.ts is not None else np.zeros(data_shape[:2], dtype=np.int64)
+        self.tr = (
+            self.tr if self.tr is not None else np.zeros(data_shape[:2], dtype=np.int64)
+        )
+        self.ts = (
+            self.ts if self.ts is not None else np.zeros(data_shape[:2], dtype=np.int64)
+        )
 
     def get(self, type_name: str) -> np.ndarray:
         """

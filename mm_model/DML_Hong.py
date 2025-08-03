@@ -23,12 +23,16 @@ class Early_fusion_CNN(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
         # For concatenated image x (7×7×d)
-        self.conv1 = nn.Conv2d(sum(param), filters[0], kernel_size=3, padding=1, bias=True)
+        self.conv1 = nn.Conv2d(
+            sum(param), filters[0], kernel_size=3, padding=1, bias=True
+        )
         self.bn1 = nn.BatchNorm2d(filters[0])
         self.conv2 = nn.Conv2d(filters[0], filters[1], (1, 1))
         self.bn2 = nn.BatchNorm2d(filters[1])
         # Max pooling ('SAME' mode) --> 4×4×32
-        self.conv3 = nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+        self.conv3 = nn.Conv2d(
+            filters[1], filters[2], kernel_size=3, padding=1, bias=True
+        )
         self.bn3 = nn.BatchNorm2d(filters[2])
         self.conv4 = nn.Conv2d(filters[2], filters[3], (1, 1))
         self.bn4 = nn.BatchNorm2d(filters[3])
@@ -82,17 +86,28 @@ class Middle_fusion_CNN(nn.Module):
         self.activation = nn.ReLU(inplace=True)
         self.max_pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)  # 'SAME' mode
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
-        self.conv1, self.bn1, self.conv2, self.bn2, self.conv3, self.bn3, self.conv4, self.bn4 = (
-            nn.ModuleList() for _ in range(8)
-        )
+        (
+            self.conv1,
+            self.bn1,
+            self.conv2,
+            self.bn2,
+            self.conv3,
+            self.bn3,
+            self.conv4,
+            self.bn4,
+        ) = (nn.ModuleList() for _ in range(8))
         for p in param:
             # For image a (7×7×d)
-            self.conv1.append(nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True))
+            self.conv1.append(
+                nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True)
+            )
             self.bn1.append(nn.BatchNorm2d(filters[0]))
             self.conv2.append(nn.Conv2d(filters[0], filters[1], (1, 1)))
             self.bn2.append(nn.BatchNorm2d(filters[1]))
             # Max pooling ('SAME' mode) --> 4×4×32
-            self.conv3.append(nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True))
+            self.conv3.append(
+                nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+            )
             self.bn3.append(nn.BatchNorm2d(filters[2]))
             self.conv4.append(nn.Conv2d(filters[2], filters[3], (1, 1)))
             self.bn4.append(nn.BatchNorm2d(filters[3]))
@@ -147,16 +162,24 @@ class Late_fusion_CNN(nn.Module):
         self.activation = nn.ReLU(inplace=True)
         self.max_pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)  # 'SAME' mode
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
-        self.conv1, self.bn1, self.conv2, self.bn2, self.conv3, self.bn3 = (nn.ModuleList() for _ in range(6))
-        self.conv4, self.bn4, self.conv5, self.bn5, self.conv6, self.bn6 = (nn.ModuleList() for _ in range(6))
+        self.conv1, self.bn1, self.conv2, self.bn2, self.conv3, self.bn3 = (
+            nn.ModuleList() for _ in range(6)
+        )
+        self.conv4, self.bn4, self.conv5, self.bn5, self.conv6, self.bn6 = (
+            nn.ModuleList() for _ in range(6)
+        )
         for p in param:
             # For image a (7×7×d)
-            self.conv1.append(nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True))
+            self.conv1.append(
+                nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True)
+            )
             self.bn1.append(nn.BatchNorm2d(filters[0]))
             self.conv2.append(nn.Conv2d(filters[0], filters[1], (1, 1)))
             self.bn2.append(nn.BatchNorm2d(filters[1]))
             # Max pooling ('SAME' mode) --> 4×4×32
-            self.conv3.append(nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True))
+            self.conv3.append(
+                nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+            )
             self.bn3.append(nn.BatchNorm2d(filters[2]))
             self.conv4.append(nn.Conv2d(filters[2], filters[3], (1, 1)))
             self.bn4.append(nn.BatchNorm2d(filters[3]))
@@ -210,17 +233,25 @@ class Decision_fusion_CNN(nn.Module):
         self.activation = nn.ReLU(inplace=True)
         self.max_pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)  # 'SAME' mode
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
-        self.conv1, self.bn1, self.conv2, self.bn2, self.conv3, self.bn3 = (nn.ModuleList() for _ in range(6))
-        self.conv4, self.bn4, self.conv5, self.bn5, self.conv6, self.bn6 = (nn.ModuleList() for _ in range(6))
+        self.conv1, self.bn1, self.conv2, self.bn2, self.conv3, self.bn3 = (
+            nn.ModuleList() for _ in range(6)
+        )
+        self.conv4, self.bn4, self.conv5, self.bn5, self.conv6, self.bn6 = (
+            nn.ModuleList() for _ in range(6)
+        )
         self.conv7 = nn.ModuleList()
         for p in param:
             # For image a (7×7×d)
-            self.conv1.append(nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True))
+            self.conv1.append(
+                nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True)
+            )
             self.bn1.append(nn.BatchNorm2d(filters[0]))
             self.conv2.append(nn.Conv2d(filters[0], filters[1], (1, 1)))
             self.bn2.append(nn.BatchNorm2d(filters[1]))
             # Max pooling ('SAME' mode) --> 4×4×32
-            self.conv3.append(nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True))
+            self.conv3.append(
+                nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+            )
             self.bn3.append(nn.BatchNorm2d(filters[2]))
             self.conv4.append(nn.Conv2d(filters[2], filters[3], (1, 1)))
             self.bn4.append(nn.BatchNorm2d(filters[3]))
@@ -249,7 +280,7 @@ class Decision_fusion_CNN(nn.Module):
             x = self.conv7[i](x)
             x_list.append(x)
         x = sum(x_list) / len(x_list)
-        x = x.view(-1, self.n_classes) # For fully convolutional NN
+        x = x.view(-1, self.n_classes)  # For fully convolutional NN
         return x
 
 
@@ -267,24 +298,32 @@ class Cross_fusion_CNN(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
         # For image a (7×7×d)
-        self.conv1_a = nn.Conv2d(input_channels, filters[0], kernel_size=3, padding=1, bias=True)
+        self.conv1_a = nn.Conv2d(
+            input_channels, filters[0], kernel_size=3, padding=1, bias=True
+        )
         self.bn1_a = nn.BatchNorm2d(filters[0])
         self.conv2_a = nn.Conv2d(filters[0], filters[1], (1, 1))
         self.bn2_a = nn.BatchNorm2d(filters[1])
         # Max pooling ('SAME' mode) --> 4×4×32
-        self.conv3_a = nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+        self.conv3_a = nn.Conv2d(
+            filters[1], filters[2], kernel_size=3, padding=1, bias=True
+        )
         self.bn3_a = nn.BatchNorm2d(filters[2])
         self.conv4_a = nn.Conv2d(filters[2], filters[3], (1, 1))
         self.bn4_a = nn.BatchNorm2d(filters[3])
         # Max pooling ('SAME' mode) --> 2×2×128
 
         # For image b (7×7×d)
-        self.conv1_b = nn.Conv2d(input_channels2, filters[0], kernel_size=3, padding=1, bias=True)
+        self.conv1_b = nn.Conv2d(
+            input_channels2, filters[0], kernel_size=3, padding=1, bias=True
+        )
         self.bn1_b = nn.BatchNorm2d(filters[0])
         self.conv2_b = nn.Conv2d(filters[0], filters[1], (1, 1))
         self.bn2_b = nn.BatchNorm2d(filters[1])
         # Max pooling ('SAME' mode) --> 4×4×32
-        self.conv3_b = nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+        self.conv3_b = nn.Conv2d(
+            filters[1], filters[2], kernel_size=3, padding=1, bias=True
+        )
         self.bn3_b = nn.BatchNorm2d(filters[2])
         self.conv4_b = nn.Conv2d(filters[2], filters[3], (1, 1))
         self.bn4_b = nn.BatchNorm2d(filters[3])

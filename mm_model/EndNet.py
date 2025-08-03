@@ -19,18 +19,26 @@ class EndNet(nn.Module):
 
         self.activation = nn.ReLU(inplace=True)
         self.sigmoid = nn.Sigmoid()
-        self.encoder_fc1, self.encoder_bn1, self.encoder_fc2, self.encoder_bn2 = (nn.ModuleList() for _ in range(4))
-        self.encoder_fc3, self.encoder_bn3, self.encoder_fc4, self.encoder_bn4 = (nn.ModuleList() for _ in range(4))
+        self.encoder_fc1, self.encoder_bn1, self.encoder_fc2, self.encoder_bn2 = (
+            nn.ModuleList() for _ in range(4)
+        )
+        self.encoder_fc3, self.encoder_bn3, self.encoder_fc4, self.encoder_bn4 = (
+            nn.ModuleList() for _ in range(4)
+        )
         self.max_pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)  # 'SAME' mode
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         for p in param:
             # Encoder
             # For image a (1×1×d)
-            self.encoder_fc1.append(nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True))
+            self.encoder_fc1.append(
+                nn.Conv2d(p, filters[0], kernel_size=3, padding=1, bias=True)
+            )
             self.encoder_bn1.append(nn.BatchNorm2d(filters[0]))
             self.encoder_fc2.append(nn.Conv2d(filters[0], filters[1], (1, 1)))
             self.encoder_bn2.append(nn.BatchNorm2d(filters[1]))
-            self.encoder_fc3.append(nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True))
+            self.encoder_fc3.append(
+                nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+            )
             self.encoder_bn3.append(nn.BatchNorm2d(filters[2]))
             self.encoder_fc4.append(nn.Conv2d(filters[2], filters[3], (1, 1)))
             self.encoder_bn4.append(nn.BatchNorm2d(filters[3]))
@@ -45,10 +53,18 @@ class EndNet(nn.Module):
         self.decoder_fc3, self.decoder_fc4 = (nn.ModuleList() for _ in range(2))
 
         for p in param:
-            self.decoder_fc1.append(nn.ConvTranspose2d(filters[3], filters[2], kernel_size=(1, 1)))
-            self.decoder_fc2.append(nn.ConvTranspose2d(filters[2], filters[1], kernel_size=(1, 1)))
-            self.decoder_fc3.append(nn.ConvTranspose2d(filters[1], filters[0], kernel_size=(1, 1)))
-            self.decoder_fc4.append(nn.ConvTranspose2d(filters[0], p, kernel_size=(1, 1)))
+            self.decoder_fc1.append(
+                nn.ConvTranspose2d(filters[3], filters[2], kernel_size=(1, 1))
+            )
+            self.decoder_fc2.append(
+                nn.ConvTranspose2d(filters[2], filters[1], kernel_size=(1, 1))
+            )
+            self.decoder_fc3.append(
+                nn.ConvTranspose2d(filters[1], filters[0], kernel_size=(1, 1))
+            )
+            self.decoder_fc4.append(
+                nn.ConvTranspose2d(filters[0], p, kernel_size=(1, 1))
+            )
 
         self.init_wight()
 
@@ -72,7 +88,9 @@ class EndNet(nn.Module):
             x_list.append(x)
 
         joint_x = torch.cat(x_list, 1)
-        joint_x = self.activation(self.joint_encoder_bn5(self.joint_encoder_fc5(joint_x)))
+        joint_x = self.activation(
+            self.joint_encoder_bn5(self.joint_encoder_fc5(joint_x))
+        )
         out = self.activation(self.joint_encoder_bn6(self.joint_encoder_fc6(joint_x)))
         out = self.avg_pool(out)
         out = self.joint_encoder_fc7(out)

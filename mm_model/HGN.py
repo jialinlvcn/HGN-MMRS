@@ -12,7 +12,13 @@ class Block(nn.Module):
         for i in range(len(channels) - 1):
             self.layers_.add_module(
                 f"conv{i}",
-                nn.Conv2d(channels[i], channels[i + 1], kernel_size=kernels[i], padding=paddings[i], bias=True),
+                nn.Conv2d(
+                    channels[i],
+                    channels[i + 1],
+                    kernel_size=kernels[i],
+                    padding=paddings[i],
+                    bias=True,
+                ),
             )
             self.layers_.add_module(f"bn{i}", nn.BatchNorm2d(channels[i + 1]))
             self.layers_.add_module(f"relu{i}", nn.ReLU(inplace=True))
@@ -29,11 +35,27 @@ class UnitGate(nn.Module):
         for i in range(len(channels) - 2):
             self.layers_.add_module(
                 f"conv{i}",
-                nn.Conv2d(channels[i], channels[i + 1], kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=True),
+                nn.Conv2d(
+                    channels[i],
+                    channels[i + 1],
+                    kernel_size=(3, 3),
+                    stride=(1, 1),
+                    padding=(1, 1),
+                    bias=True,
+                ),
             )
             self.layers_.add_module(f"bn{i}", nn.BatchNorm2d(channels[i + 1]))
             self.layers_.add_module(f"relu{i}", nn.PReLU(num_parameters=1))
-        self.layers_.add_module("conv", nn.Conv2d(channels[-2], channels[-1], kernel_size=(3, 3), padding=(1, 1), bias=True))
+        self.layers_.add_module(
+            "conv",
+            nn.Conv2d(
+                channels[-2],
+                channels[-1],
+                kernel_size=(3, 3),
+                padding=(1, 1),
+                bias=True,
+            ),
+        )
 
     def forward(self, x):
         out = self.layers_(x)
@@ -91,14 +113,52 @@ class HGN(nn.Module):
             block_params = (input_chs, kernels, paddings)
             self.signal_extractor.append(IndependentExtractor(block_params, n_classes))
 
-        self.low_gate = UnitGate([filters[1] * (len(params) + 1), int(filters[1] / 2), int(filters[1] / 4), len(params) + 1])
-        self.mid_gate = UnitGate([filters[3] * (len(params) + 1), int(filters[3] / 2), int(filters[3] / 4), len(params) + 1])
-        self.high_gate = UnitGate([filters[2] * (len(params) + 1), int(filters[2] / 2), int(filters[2] / 4), len(params) + 1])
-        self.decision_gate = UnitGate([n_classes * (len(params) + 1), int(filters[2] / 2), int(filters[2] / 4), len(params) + 1])
+        self.low_gate = UnitGate(
+            [
+                filters[1] * (len(params) + 1),
+                int(filters[1] / 2),
+                int(filters[1] / 4),
+                len(params) + 1,
+            ]
+        )
+        self.mid_gate = UnitGate(
+            [
+                filters[3] * (len(params) + 1),
+                int(filters[3] / 2),
+                int(filters[3] / 4),
+                len(params) + 1,
+            ]
+        )
+        self.high_gate = UnitGate(
+            [
+                filters[2] * (len(params) + 1),
+                int(filters[2] / 2),
+                int(filters[2] / 4),
+                len(params) + 1,
+            ]
+        )
+        self.decision_gate = UnitGate(
+            [
+                n_classes * (len(params) + 1),
+                int(filters[2] / 2),
+                int(filters[2] / 4),
+                len(params) + 1,
+            ]
+        )
 
-        self.fusion_block1 = Block([sum(params), filters[0], filters[1]], [(3, 3), (1, 1)], [1, 0])
-        self.fusion_block2 = Block([filters[1] * (len(params) + 1), filters[2], filters[3]], [(3, 3), (1, 1)], [1, 0])
-        self.fusion_block3 = Block([filters[3] * (len(params) + 1), filters[3], filters[2]], [(1, 1), (1, 1)], [0, 0])
+        self.fusion_block1 = Block(
+            [sum(params), filters[0], filters[1]], [(3, 3), (1, 1)], [1, 0]
+        )
+        self.fusion_block2 = Block(
+            [filters[1] * (len(params) + 1), filters[2], filters[3]],
+            [(3, 3), (1, 1)],
+            [1, 0],
+        )
+        self.fusion_block3 = Block(
+            [filters[3] * (len(params) + 1), filters[3], filters[2]],
+            [(1, 1), (1, 1)],
+            [0, 0],
+        )
 
         self.conv = nn.Conv2d(filters[2] * (len(params) + 1), n_classes, (1, 1))
 
@@ -149,7 +209,7 @@ class HGN(nn.Module):
 
         return fusion_out
 
-    def gate_aggregation(self, features:list[torch.tensor], gate_name="low"):
+    def gate_aggregation(self, features: list[torch.tensor], gate_name="low"):
         if gate_name == "low":
             gate_weight = self.low_gate(torch.cat(features, dim=1))
         elif gate_name == "mid":
@@ -160,9 +220,10 @@ class HGN(nn.Module):
             gate_weight = self.decision_gate(torch.cat(features, dim=1))
 
         fusion_out = gate_weight.unsqueeze(-1) * torch.stack(features, dim=1)
-        fusion_out = torch.cat([fusion_out[:, i] for i in range(fusion_out.shape[1])], 1)
+        fusion_out = torch.cat(
+            [fusion_out[:, i] for i in range(fusion_out.shape[1])], 1
+        )
         return fusion_out
-
 
 
 if __name__ == "__main__":
@@ -202,4 +263,3 @@ if __name__ == "__main__":
                 print(logit.shape)
             unex, ex = model.load_state_dict(new_state_dict, strict=False)
             torch.save(model.state_dict(), save_path.replace("IndNet", "HGN"))
-

@@ -3,7 +3,11 @@ import torch.nn as nn
 import mm_model
 import mmrs_utils
 
-param_dict = {"Houston2013": [144, 1, 15], "Trento": [63, 1, 6], "Augsburg": [180, 4, 1, 7]}
+param_dict = {
+    "Houston2013": [144, 1, 15],
+    "Trento": [63, 1, 6],
+    "Augsburg": [180, 4, 1, 7],
+}
 
 Houston2013_cmap = {
     0: [0, 0, 0],
@@ -77,8 +81,15 @@ def get_model(model_name: str, data_type: str, patch_size: int = 7) -> nn.Module
 
 
 def get_dataset(
-    data_dir: str, data_type: str, patch_size=7, p=1.0, slice_method="ignore", ignore=[0]
-) -> tuple[mmrs_utils.RSMultiDataset, mmrs_utils.RSMultiDataset, mmrs_utils.RSMultiData]:
+    data_dir: str,
+    data_type: str,
+    patch_size=7,
+    p=1.0,
+    slice_method="ignore",
+    ignore=[0],
+) -> tuple[
+    mmrs_utils.RSMultiDataset, mmrs_utils.RSMultiDataset, mmrs_utils.RSMultiData
+]:
     """
     Loads and prepares the dataset for training and testing based on the provided parameters.
 
@@ -126,10 +137,18 @@ def get_dataset(
 
     # Create training and testing datasets using the loaded data
     trainset = mmrs_utils.RSMultiDataset(
-        data, is_train=True, patch_size=patch_size, slice_method=slice_method, ignore=ignore
+        data,
+        is_train=True,
+        patch_size=patch_size,
+        slice_method=slice_method,
+        ignore=ignore,
     )
     testset = mmrs_utils.RSMultiDataset(
-        data, is_train=False, patch_size=patch_size, slice_method=slice_method, ignore=ignore
+        data,
+        is_train=False,
+        patch_size=patch_size,
+        slice_method=slice_method,
+        ignore=ignore,
     )
 
     return trainset, testset, data

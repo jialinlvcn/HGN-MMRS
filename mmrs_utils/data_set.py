@@ -44,7 +44,9 @@ def slice_with_padding_numba(value, centers, patch_size, H, W) -> np.ndarray:
             :,
             valid_start_row - start_row : valid_end_row - start_row,
             valid_start_col - start_col : valid_end_col - start_col,
-        ] = value[valid_start_row:valid_end_row, valid_start_col:valid_end_col, :].transpose(2, 0, 1)
+        ] = value[
+            valid_start_row:valid_end_row, valid_start_col:valid_end_col, :
+        ].transpose(2, 0, 1)
 
     return sliced_images
 
@@ -129,7 +131,10 @@ def slice_with_ignore(data: dict, centers: list, patch_size: int) -> tuple[dict,
     indices = [
         (x, y, gt)
         for x, y, gt in centers
-        if x > patch_size // 2 and x < H - patch_size // 2 - 1 and y > patch_size and y < W - patch_size // 2 - 1
+        if x > patch_size // 2
+        and x < H - patch_size // 2 - 1
+        and y > patch_size
+        and y < W - patch_size // 2 - 1
     ]
 
     # Slice patches from the data using the filtered centers
@@ -143,7 +148,11 @@ def get_nonzero(array: np.ndarray, ignore: list):
     coordinates = np.argwhere(array != 0)
     ignore_set = set(ignore)
     result = [
-        (coord[0], coord[1], array[coord[0], coord[1]] - len(ignore))
+        (
+            coord[0],
+            coord[1],
+            array[coord[0], coord[1]] - (array[coord[0], coord[1]] > ignore).sum(),
+        )
         for coord in coordinates
         if array[coord[0], coord[1]] not in ignore_set
     ]
@@ -184,9 +193,13 @@ class RSMultiDataset(Dataset):
         # Slice patches based on the specified method
         nonzero = get_nonzero(self.gt, ignore)
         if slice_method == "ignore":
-            self.patchs, self.indices = slice_with_ignore(self.multi_data, nonzero, patch_size)
+            self.patchs, self.indices = slice_with_ignore(
+                self.multi_data, nonzero, patch_size
+            )
         elif slice_method == "padding":
-            self.patchs, self.indices = slice_with_padding(self.multi_data, nonzero, patch_size)
+            self.patchs, self.indices = slice_with_padding(
+                self.multi_data, nonzero, patch_size
+            )
         else:
             # Raise an error for unsupported slice methods
             RuntimeError(
@@ -240,7 +253,9 @@ class RSMultiDataset(Dataset):
         """
         x_pos, y_pos, gt = self.indices[idx]
         if self.is_train and self.is_flip:
-            data_zip = [self.flip(d[idx].astype(np.float32)) for d in self.patchs.values()]
+            data_zip = [
+                self.flip(d[idx].astype(np.float32)) for d in self.patchs.values()
+            ]
         else:
             data_zip = [d[idx].astype(np.float32) for d in self.patchs.values()]
         if len(data_zip) == 1:

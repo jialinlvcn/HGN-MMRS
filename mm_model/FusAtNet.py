@@ -11,7 +11,9 @@ import torch.nn as nn
 class ConvUnit(nn.Module):
     def __init__(self, input_channels, output_channels):
         super().__init__()
-        self.conv = nn.Conv2d(input_channels, output_channels, kernel_size=3, padding=1, bias=True)
+        self.conv = nn.Conv2d(
+            input_channels, output_channels, kernel_size=3, padding=1, bias=True
+        )
         self.bn = nn.BatchNorm2d(output_channels)
         self.activation = nn.ReLU()
 
@@ -36,9 +38,13 @@ class ConvUnit_NP(nn.Module):
 class Residual_Unit1(nn.Module):
     def __init__(self, input_channels, output_channels):
         super().__init__()
-        self.conv1 = nn.Conv2d(input_channels, output_channels, kernel_size=3, padding=1, bias=True)
+        self.conv1 = nn.Conv2d(
+            input_channels, output_channels, kernel_size=3, padding=1, bias=True
+        )
         self.bn1 = nn.BatchNorm2d(output_channels)
-        self.conv2 = nn.Conv2d(output_channels, output_channels, kernel_size=3, padding=1, bias=True)
+        self.conv2 = nn.Conv2d(
+            output_channels, output_channels, kernel_size=3, padding=1, bias=True
+        )
         self.bn2 = nn.BatchNorm2d(output_channels)
         self.activation = nn.ReLU()
         self.max_pool = nn.MaxPool2d(kernel_size=2, stride=2)
@@ -56,9 +62,13 @@ class Residual_Unit2(nn.Module):
     # without pooling
     def __init__(self, input_channels, output_channels):
         super().__init__()
-        self.conv1 = nn.Conv2d(input_channels, output_channels, kernel_size=3, padding=1, bias=True)
+        self.conv1 = nn.Conv2d(
+            input_channels, output_channels, kernel_size=3, padding=1, bias=True
+        )
         self.bn1 = nn.BatchNorm2d(output_channels)
-        self.conv2 = nn.Conv2d(output_channels, output_channels, kernel_size=3, padding=1, bias=True)
+        self.conv2 = nn.Conv2d(
+            output_channels, output_channels, kernel_size=3, padding=1, bias=True
+        )
         self.bn2 = nn.BatchNorm2d(output_channels)
         self.activation = nn.ReLU()
 
@@ -179,12 +189,16 @@ class Classification_Module(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
         # For concatenated image x (7×7×d)
-        self.conv1 = nn.Conv2d(input_channels, filters[0], kernel_size=3, padding=1, bias=True)
+        self.conv1 = nn.Conv2d(
+            input_channels, filters[0], kernel_size=3, padding=1, bias=True
+        )
         self.bn1 = nn.BatchNorm2d(filters[0])
         self.conv2 = nn.Conv2d(filters[0], filters[1], (1, 1))
         self.bn2 = nn.BatchNorm2d(filters[1])
         # Max pooling ('SAME' mode) --> 4×4×32
-        self.conv3 = nn.Conv2d(filters[1], filters[2], kernel_size=3, padding=1, bias=True)
+        self.conv3 = nn.Conv2d(
+            filters[1], filters[2], kernel_size=3, padding=1, bias=True
+        )
         self.bn3 = nn.BatchNorm2d(filters[2])
         self.conv4 = nn.Conv2d(filters[2], filters[3], (1, 1))
         self.bn4 = nn.BatchNorm2d(filters[3])
@@ -239,8 +253,12 @@ class FusAtNet(nn.Module):
             self.spectral_am = Spectral_Attention_Module(param[0], 1024)
             self.spatial_am = Spatial_Attention_module(param[1], 1024)
             self.spat_am = Spatial_Attention_module(param[2], 1024)
-            self.mfe = Modality_Feature_Extractor(1024 * 3 + param[0] + param[1] + param[2], 1024)
-            self.mam = Modality_Attention_Module(1024 * 3 + param[0] + param[1] + param[2], 1024)
+            self.mfe = Modality_Feature_Extractor(
+                1024 * 3 + param[0] + param[1] + param[2], 1024
+            )
+            self.mam = Modality_Attention_Module(
+                1024 * 3 + param[0] + param[1] + param[2], 1024
+            )
             self.cm = Classification_Module(1024, num_classes)
 
         self.init_wight()

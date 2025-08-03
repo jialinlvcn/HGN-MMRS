@@ -91,7 +91,9 @@ class Spatial_Enhance_Module(nn.Module):
 
 
 class Spectral_Enhance_Module(nn.Module):
-    def __init__(self, in_channels, in_channels2, inter_channels=None, inter_channels2=None):
+    def __init__(
+        self, in_channels, in_channels2, inter_channels=None, inter_channels2=None
+    ):
         """Implementation of SEEM: Spectral Enhancement Module
         args:
             in_channels: original channel size
@@ -229,26 +231,40 @@ class S2ENet(nn.Module):
         self.planes_b = [8, 16, 32]
 
         # For image a (7×7×input_channels) --> (7×7×planes_a[0])
-        self.conv1_a = conv_bn_relu(input_channels, self.planes_a[0], kernel_size=3, padding=1, bias=True)
+        self.conv1_a = conv_bn_relu(
+            input_channels, self.planes_a[0], kernel_size=3, padding=1, bias=True
+        )
         # For image b (7×7×input_channels2) --> (7×7×planes_b[0])
-        self.conv1_b = conv_bn_relu(input_channels2, self.planes_b[0], kernel_size=3, padding=1, bias=True)
+        self.conv1_b = conv_bn_relu(
+            input_channels2, self.planes_b[0], kernel_size=3, padding=1, bias=True
+        )
 
         # For image a (7×7×planes_a[0]) --> (7×7×planes_a[1])
-        self.conv2_a = conv_bn_relu(self.planes_a[0], self.planes_a[1], kernel_size=3, padding=1, bias=True)
+        self.conv2_a = conv_bn_relu(
+            self.planes_a[0], self.planes_a[1], kernel_size=3, padding=1, bias=True
+        )
         # For image b (7×7×planes_b[0]) --> (7×7×planes_b[1])
-        self.conv2_b = conv_bn_relu(self.planes_b[0], self.planes_b[1], kernel_size=3, padding=1, bias=True)
+        self.conv2_b = conv_bn_relu(
+            self.planes_b[0], self.planes_b[1], kernel_size=3, padding=1, bias=True
+        )
 
         # For image a (7×7×planes_a[1]) --> (7×7×planes_a[2])
-        self.conv3_a = conv_bn_relu(self.planes_a[1], self.planes_a[2], kernel_size=3, padding=1, bias=True)
+        self.conv3_a = conv_bn_relu(
+            self.planes_a[1], self.planes_a[2], kernel_size=3, padding=1, bias=True
+        )
         # For image b (7×7×planes_b[1]) --> (7×7×planes_b[2])
-        self.conv3_b = conv_bn_relu(self.planes_b[1], self.planes_b[2], kernel_size=3, padding=1, bias=True)
+        self.conv3_b = conv_bn_relu(
+            self.planes_b[1], self.planes_b[2], kernel_size=3, padding=1, bias=True
+        )
 
         self.SAEM = Spatial_Enhance_Module(
             in_channels=self.planes_a[2],
             inter_channels=self.planes_a[2] // 2,
             size=patch_size,
         )
-        self.SEEM = Spectral_Enhance_Module(in_channels=self.planes_b[2], in_channels2=self.planes_a[2])
+        self.SEEM = Spectral_Enhance_Module(
+            in_channels=self.planes_b[2], in_channels2=self.planes_a[2]
+        )
 
         self.FusionLayer = nn.Sequential(
             nn.Conv2d(

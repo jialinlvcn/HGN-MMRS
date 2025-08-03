@@ -7,9 +7,12 @@ from torch.utils.data import DataLoader, Dataset
 from tabulate import tabulate
 import random
 
+
 def generate_unique_colors(N):
     if N > 256**3:
-        raise ValueError("N cannot be greater than 16777216 (256^3), as there are only 16777216 unique RGB colors.")
+        raise ValueError(
+            "N cannot be greater than 16777216 (256^3), as there are only 16777216 unique RGB colors."
+        )
 
     unique_colors = set()
     while len(unique_colors) < N:
@@ -19,14 +22,21 @@ def generate_unique_colors(N):
 
     return list(unique_colors)
 
+
 def generate_cmap(length, cmap_name="viridis"):
     colors = generate_unique_colors(int(length))
     colors[0] = (0, 0, 0)
     cmap_dict = {i: colors[i] for i in range(int(length))}
     return cmap_dict
 
+
 def hsi2rgb(
-    hsi_image: np.ndarray, rgb_channels: list, save_path: str, percentile_low=2, percentile_high=98, gamma=0.6
+    hsi_image: np.ndarray,
+    rgb_channels: list,
+    save_path: str,
+    percentile_low=2,
+    percentile_high=98,
+    gamma=0.6,
 ) -> np.ndarray:
     """
     Converts a hyperspectral image (HSI) to an RGB image by extracting specified channels,
@@ -52,9 +62,15 @@ def hsi2rgb(
     rgb_image = np.stack((red_channel, green_channel, blue_channel), axis=-1)
 
     # Apply percentile-based contrast stretching
-    low = np.percentile(rgb_image, percentile_low)  # Calculate the lower percentile value
-    high = np.percentile(rgb_image, percentile_high)  # Calculate the upper percentile value
-    rgb_image = (rgb_image - low) / (high - low + 1e-8)  # Stretch the intensity range (avoid division by zero)
+    low = np.percentile(
+        rgb_image, percentile_low
+    )  # Calculate the lower percentile value
+    high = np.percentile(
+        rgb_image, percentile_high
+    )  # Calculate the upper percentile value
+    rgb_image = (rgb_image - low) / (
+        high - low + 1e-8
+    )  # Stretch the intensity range (avoid division by zero)
     rgb_image = np.clip(rgb_image, 0, 1)  # Clip values to the range [0, 1]
 
     # Apply gamma correction to adjust brightness
@@ -137,7 +153,9 @@ def lidar2grey(lidar_image: np.ndarray, save_path: str):
     lidar_image = lidar_image.astype(np.float32)
 
     # Create a figure with the appropriate size and resolution
-    plt.figure(figsize=(lidar_image.shape[1] / 100, lidar_image.shape[0] / 100), dpi=100)
+    plt.figure(
+        figsize=(lidar_image.shape[1] / 100, lidar_image.shape[0] / 100), dpi=100
+    )
 
     # Display the LiDAR image in grayscale
     plt.imshow(lidar_image, cmap="gray", vmin=0, vmax=1)
@@ -203,7 +221,11 @@ def get_corrd(array, ignore):
 
     # Filter out coordinates with values in the ignore set and adjust the values
     result = [
-        (coord[0], coord[1], array[coord[0], coord[1]] - (ignore < array[coord[0], coord[1]]).sum())
+        (
+            coord[0],
+            coord[1],
+            array[coord[0], coord[1]] - (ignore < array[coord[0], coord[1]]).sum(),
+        )
         for coord in coordinates
         if array[coord[0], coord[1]] not in ignore_set
     ]
@@ -245,12 +267,16 @@ class FullPatchDataset(Dataset):
         data_zip = []
         for data_type in self.multi_data.keys:
             value = self.multi_data.get(data_type)
-            sliced_image = np.zeros((value.shape[-1], self.patch_size, self.patch_size), dtype=np.float32)
+            sliced_image = np.zeros(
+                (value.shape[-1], self.patch_size, self.patch_size), dtype=np.float32
+            )
             sliced_image[
                 :,
                 valid_start_row - start_row : valid_end_row - start_row,
                 valid_start_col - start_col : valid_end_col - start_col,
-            ] = value[valid_start_row:valid_end_row, valid_start_col:valid_end_col, :].transpose(2, 0, 1)
+            ] = value[
+                valid_start_row:valid_end_row, valid_start_col:valid_end_col, :
+            ].transpose(2, 0, 1)
             data_zip.append(sliced_image)
         return (data_zip, gt, x_pos, y_pos)
 
@@ -335,7 +361,11 @@ def draw_result(
     # Initialize progress bar if a manager is provided
     manager = manager if manager else enlighten.get_manager()
     ticks = manager.counter(
-        total=len(loader), desc="Drawing classification maps", unit="pixel", color="red", leave=False
+        total=len(loader),
+        desc="Drawing classification maps",
+        unit="pixel",
+        color="red",
+        leave=False,
     )
 
     ignore_tensor = torch.tensor(ignore)
@@ -344,8 +374,10 @@ def draw_result(
     for _, (data, gt, x_pos, y_pos) in enumerate(loader):
         if draw_gt or not model:  # Visualize ground truth
             # Get colors from ground truth labels
-            
-            rgb_values = np.array([cmap[p.item() + (p >= ignore_tensor).sum().item()] for p in gt])
+
+            rgb_values = np.array(
+                [cmap[p.item() + (p >= ignore_tensor).sum().item()] for p in gt]
+            )
             rgb_image[x_pos, y_pos] = rgb_values[:, :3]
         else:  # Generate model predictions
             # Set model and data to evaluation mode and move to target device
